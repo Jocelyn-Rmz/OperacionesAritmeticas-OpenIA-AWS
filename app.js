@@ -1,5 +1,5 @@
 // ⚠️ Coloca aquí tu URL EXACTA del Webhook de n8n que responde SOLO el número (texto plano)
-const WEBHOOK_URL = "https://joce17.app.n8n.cloud/webhook/386d1aec-2931-4e04-9dd3-397497ea090e";
+const WEBHOOK_URL = "https://joce17.app.n8n.cloud/webhook/af72b7e2-6f57-4d5f-bf0b-01ca58aa0284";
 
 // ✅ URL pública de tu Google Sheet (abre en nueva pestaña)
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/12kjVySDqun-vjCkncx3P9QLW29nZamI12izX5vJ3rmQ/edit?usp=sharing";
