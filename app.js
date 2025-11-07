@@ -1,7 +1,8 @@
-// ⚠️ Coloca aquí tu URL EXACTA del Webhook de n8n que responde SOLO el número (texto plano)
+console.log("Versión local");
+
 const WEBHOOK_URL = "https://joce17.app.n8n.cloud/webhook/af72b7e2-6f57-4d5f-bf0b-01ca58aa0284";
 
-// ✅ URL pública de tu Google Sheet (abre en nueva pestaña)
+// ✅ URL pública de tu Google Sheet
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/12kjVySDqun-vjCkncx3P9QLW29nZamI12izX5vJ3rmQ/edit?usp=sharing";
 
 const $ = s => document.querySelector(s);
@@ -33,7 +34,7 @@ function clearAlert(){
 }
 function flashResult(){
   resultadoEl.classList.remove("fade-num");
-  void resultadoEl.offsetWidth; // reflow para reiniciar animación
+  void resultadoEl.offsetWidth;
   resultadoEl.classList.add("fade-num");
 }
 
@@ -48,19 +49,32 @@ async function enviar() {
   resultadoEl.textContent = "…";
 
   try {
+    // 🔥 PASO 1: Obtener la IP pública del cliente
+    let clientIP = 'desconocida';
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const ipData = await ipRes.json();
+      clientIP = ipData.ip;
+    } catch (ipError) {
+      console.warn('⚠️ No se pudo obtener la IP:', ipError);
+    }
+
+    // 🔥 PASO 2: Enviar operación + IP al webhook
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto: expr })
+      body: JSON.stringify({ 
+        texto: expr,
+        client_ip: clientIP  // 🔥 CRÍTICO: Debe estar aquí
+      })
     });
 
-    const raw = await res.text(); // el backend responde SOLO el número como texto
+    const raw = await res.text();
     if(!res.ok) throw new Error(`Error ${res.status}: ${raw || "sin cuerpo"}`);
 
     const num = Number(raw.trim());
     if(Number.isNaN(num)) throw new Error(`Respuesta no numérica: ${raw}`);
 
-    // Mostrar SOLO el número
     resultadoEl.textContent = num;
     flashResult();
   } catch (e) {
